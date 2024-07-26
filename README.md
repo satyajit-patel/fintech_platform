@@ -18,7 +18,7 @@ Business Logic with Node.js
 - [API Endpoints](#api-endpoints)
 
 ## Folder Structure
-
+```
 backend/
 ├── config/
 │ └── config.js
@@ -31,6 +31,7 @@ backend/
 ├── server.js
 ├── package.json
 └── .env
+```
 
 
 - **config/**: Contains configuration files.
@@ -91,25 +92,18 @@ The server will start on the port specified in the `.env` file (default is 3000)
 - **Body**:
     ```json
     {
-        "accountId": 1,
-        "amount": 100.00
+        "accountId": 3,
+        "amount": 300.00
     }
     ```
 - **Response**:
     ```json
     {
         "data": {
-            "insert_transactions": {
+            "insert_fintechDB": {
                 "returning": [
                     {
-                        "id": 1
-                    }
-                ]
-            },
-            "update_accounts": {
-                "returning": [
-                    {
-                        "balance": 100.00
+                        "accountId": 3
                     }
                 ]
             }

@@ -2,33 +2,40 @@ const axios = require('axios');
 const { hasuraEndpoint, hasuraSecret } = require('../config/config');
 
 const makeDeposit = async (accountId, amount) => {
+  // Define the GraphQL mutation query using backticks
   const query = `
-    mutation ($accountId: Int!, $amount: Float!) {
-      insert_transactions(objects: {account_id: $accountId, amount: $amount, type: "deposit"}) {
+    mutation ($accountId: Int!, $amount: numeric!) {
+      insert_fintechDB(objects: {accountId: $accountId, amount: $amount}) {
         returning {
-          id
-        }
-      }
-      update_accounts(where: {id: {_eq: $accountId}}, _inc: {balance: $amount}) {
-        returning {
-          balance
+          accountId
         }
       }
     }
   `;
+
+  // Define the variables
   const variables = { accountId, amount };
 
-  const response = await axios.post(
-    hasuraEndpoint,
-    { query, variables },
-    {
-      headers: {
-        'x-hasura-admin-secret': hasuraSecret,
-      },
-    }
-  );
+  try {
+    // Make the HTTP request to Hasura
+    const response = await axios.post(
+      `${hasuraEndpoint}/v1/graphql`,  // Ensure the correct endpoint
+      { query, variables },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'x-hasura-admin-secret': hasuraSecret,
+        },
+      }
+    );
 
-  return response.data;
+    // Return the response data
+    return response.data;
+  } catch (error) {
+    // Handle any errors that occur during the request
+    console.error('Error making deposit:', error.response ? error.response.data : error.message);
+    throw error;
+  }
 };
 
 module.exports = {
